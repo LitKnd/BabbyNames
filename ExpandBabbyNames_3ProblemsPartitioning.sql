@@ -7,20 +7,26 @@ This script:
     Is only suitable for test environments
     Restores and modifies data in BabbyNames
     Creates and loads large tables
+
+Note: this script assumes you have a backup of BabbyNames
+    at 'S:\MSSQL\Backup\BabbyNames.bak'
+    You need to either change that, or put a backup there :)
 ****************************************/
 
 
 /****************************************************
-Take a backup after running the setup script,
+Take a backup of this expanded database after running the setup script,
 so you can just restore it in the future instead of re-running setup
 ****************************************************/
 
 /*
-BACKUP DATABASE BabbyNames
-    TO DISK = N'S:\MSSQL\Backup\BabbyNames_3ProblemsPartitioning_1_of_2.bak',
-       DISK = N'S:\MSSQL\Backup\BabbyNames_3ProblemsPartitioning_2_of_2.bak'
- WITH COMPRESSION, INIT;
-GO
+--BACKUP DATABASE BabbyNames
+-- TO DISK = N'S:\MSSQL\Backup\BabbyNames_3ProblemsPartitioning_1_of_4.bak',
+--    DISK = N'S:\MSSQL\Backup\BabbyNames_3ProblemsPartitioning_2_of_4.bak',
+--    DISK = N'S:\MSSQL\Backup\BabbyNames_3ProblemsPartitioning_3_of_4.bak',
+--    DISK = N'S:\MSSQL\Backup\BabbyNames_3ProblemsPartitioning_4_of_4.bak'
+-- WITH COMPRESSION, INIT;
+--GO
 
 use master;
 GO
