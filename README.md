@@ -1,5 +1,5 @@
 # BabbyNames
-Answering the question, "How is babby named?" in a SQL Server Database.
+You've heard of [Little Bobby Tables](https://xkcd.com/327/). Now there are Little [Babby](http://www.bbc.co.uk/ulsterscots/words/babbie-babby) Tables.
 
 Grab BabbyNames.bak.zip here: https://github.com/LitKnd/BabbyNames/releases/tag/v1.0
 
