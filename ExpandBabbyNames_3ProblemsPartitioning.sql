@@ -35,8 +35,12 @@ BEGIN
     ALTER DATABASE BabbyNames SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 END
 GO
-RESTORE DATABASE BabbyNames
-    FROM DISK = N'S:\MSSQL\Backup\BabbyNames_3-Problems-Partitioning.bak' WITH REPLACE;
+RESTORE DATABASE BabbyNames FROM 
+    DISK = N'S:\MSSQL\Backup\BabbyNames_3ProblemsPartitioning_1_of_4.bak', 
+    DISK = N'S:\MSSQL\Backup\BabbyNames_3ProblemsPartitioning_2_of_4.bak',
+    DISK = N'S:\MSSQL\Backup\BabbyNames_3ProblemsPartitioning_3_of_4.bak',
+    DISK = N'S:\MSSQL\Backup\BabbyNames_3ProblemsPartitioning_4_of_4.bak'
+WITH REPLACE;
 GO
 
 */
