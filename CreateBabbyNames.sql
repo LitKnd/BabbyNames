@@ -71,7 +71,7 @@ RECONFIGURE
 GO
 
 /****************************************
-SET stuff
+SET stuff n things
 ****************************************/
 SET ANSI_NULLS ON
 GO
@@ -84,7 +84,7 @@ GO
 SET NOCOUNT ON;
 GO
 
-:SETVAR Versn "1_100"
+:SETVAR Versn "1_200"
 
 /****************************************
 Recreate BabbyNames database.
@@ -191,15 +191,12 @@ ALTER TABLE evt.[Log]
 GO
 
 /****************************************
-Load the src tables from disk using BULK INSERT 
+Load the national src tables from disk using BULK INSERT 
 ****************************************/
 
-EXEC evt.logme N'Load the src tables from disk using BULK INSERT.';
+EXEC evt.logme N'Load the national src tables from disk using BULK INSERT.';
 GO
 
-
-USE BabbyNames;
-GO
 
 CREATE SCHEMA src AUTHORIZATION dbo;
 GO
@@ -255,9 +252,9 @@ GO
 
 
 /****************************************
-Create a partitioned view. 
+Create a partitioned view for national src tables. 
 ****************************************/
-EXEC evt.logme N'Create the partitioned view.';
+EXEC evt.logme N'Create the partitioned view for national src tables.';
 
 IF (SELECT COUNT(*) from sys.objects where name='names_all') = 1
 	DROP VIEW src.names_all ;
@@ -392,12 +389,10 @@ GO
 
 
 /****************************************
-Drop src objects
+Drop national src objects
 ****************************************/
-USE BabbyNames;
-GO
 
-EXEC evt.logme N'Drop src objects.';
+EXEC evt.logme N'Drop national src objects.';
 GO
 
 IF (SELECT COUNT(*) from sys.objects where name='names_all') = 1
@@ -429,6 +424,181 @@ BEGIN
 END
 GO
 
+/****************************************
+Create and populate ref.State 
+****************************************/
+
+EXEC evt.logme N'Create and populate ref.State.';
+GO
+
+CREATE TABLE ref.State (
+	StateCode CHAR(2) NOT NULL,
+	StateName VARCHAR(128) NOT NULL,
+    CONSTRAINT pk_ref_State PRIMARY KEY CLUSTERED (StateCode)
+);
+GO
+
+INSERT ref.State (StateCode, StateName)
+VALUES
+    ('AL', 'Alabama'),
+    ('AK', 'Alaska'),
+    ('AZ', 'Arizona'),
+    ('AR', 'Arkansas'),
+    ('CA', 'California'),
+    ('CO', 'Colorado'),
+    ('CT', 'Connecticut'),
+    ('DE', 'Delaware'),
+    ('DC', 'District of Columbia'),
+    ('FL', 'Florida'),
+    ('GA', 'Georgia'),
+    ('HI', 'Hawaii'),
+    ('ID', 'Idaho'),
+    ('IL', 'Illinois'),
+    ('IN', 'Indiana'),
+    ('IA', 'Iowa'),
+    ('KS', 'Kansas'),
+    ('KY', 'Kentucky'),
+    ('LA', 'Louisiana'),
+    ('ME', 'Maine'),
+    ('MD', 'Maryland'),
+    ('MA', 'Massachusetts'),
+    ('MI', 'Michigan'),
+    ('MN', 'Minnesota'),
+    ('MS', 'Mississippi'),
+    ('MO', 'Missouri'),
+    ('MT', 'Montana'),
+    ('NE', 'Nebraska'),
+    ('NV', 'Nevada'),
+    ('NH', 'New Hampshire'),
+    ('NJ', 'New Jersey'),
+    ('NM', 'New Mexico'),
+    ('NY', 'New York'),
+    ('NC', 'North Carolina'),
+    ('ND', 'North Dakota'),
+    ('OH', 'Ohio'),
+    ('OK', 'Oklahoma'),
+    ('OR', 'Oregon'),
+    ('PA', 'Pennsylvania'),
+    ('RI', 'Rhode Island'),
+    ('SC', 'South Carolina'),
+    ('SD', 'South Dakota'),
+    ('TN', 'Tennessee'),
+    ('TX', 'Texas'),
+    ('UT', 'Utah'),
+    ('VT', 'Vermont'),
+    ('VA', 'Virginia'),
+    ('WA', 'Washington'),
+    ('WV', 'West Virginia'),
+    ('WI', 'Wisconsin'),
+    ('WY', 'Wyoming')
+
+
+/****************************************
+Load src.StateDataRaw from disk 
+****************************************/
+EXEC evt.logme N'Load src.StateDataRaw from disk.';
+GO
+
+CREATE TABLE src.StateDataRaw (
+    StateCode CHAR(2) NOT NULL,
+    Gender CHAR(1) NOT NULL,
+    BirthYear INT NOT NULL,
+    FirstName nvarchar(15) NOT NULL,
+    NameCount int NOT NULL
+);
+
+declare @tablename nvarchar(256),
+    @dsql nvarchar(max),
+    @statecode char(2),
+    @statename varchar(128);
+ 
+DECLARE @StateDataLoad as CURSOR;
+ 
+SET @StateDataLoad = CURSOR FOR
+SELECT StateCode, StateName
+ FROM ref.State;
+ 
+OPEN @StateDataLoad;
+FETCH NEXT FROM @StateDataLoad INTO @statecode, @statename;
+ 
+WHILE @@FETCH_STATUS = 0
+BEGIN
+
+	EXEC evt.logme @statecode;
+
+	BEGIN
+		SET @dsql=N'
+		BULK INSERT BabbyNames.src.StateDataRaw 
+			FROM ''$(DataSourcePath)' + @statecode + N'.TXT'' 
+			WITH ( FIELDTERMINATOR = '','', ROWTERMINATOR = ''\n'');			
+			';
+				
+		EXEC(@dsql);
+	END
+
+ FETCH NEXT FROM @StateDataLoad INTO @statecode, @statename;
+END
+ 
+CLOSE @StateDataLoad;
+DEALLOCATE @StateDataLoad;
+
+ALTER TABLE src.StateDataRaw
+ADD CONSTRAINT pk_src_StateDataRaw PRIMARY KEY CLUSTERED 
+(StateCode, BirthYear, FirstName, Gender);
+GO
+
+
+/****************************************
+Create and populate agg.FirstNameByYearState
+****************************************/
+EXEC evt.logme N'Create and populate agg.FirstNameByYearState';
+GO
+
+CREATE TABLE agg.FirstNameByYearState (
+	ReportYear INT NOT NULL,
+    StateCode char(2) NOT NULL,
+	FirstNameId INT NOT NULL,
+	Gender char(1) NOT NULL,
+	NameCount INT NOT NULL
+);
+GO
+
+INSERT agg.FirstNameByYearState  WITH (TABLOCK)
+	(ReportYear, StateCode, FirstNameId, Gender, NameCount)
+SELECT 
+	na.BirthYear, 
+    na.StateCode,
+	fn.FirstNameId, 
+	na.Gender,
+	na.NameCount
+FROM src.StateDataRaw na
+JOIN ref.FirstName fn on na.FirstName=fn.FirstName;
+GO
+
+EXEC evt.logme N'Key agg.FirstNameByYearState';
+GO
+
+ALTER TABLE agg.FirstNameByYearState
+	ADD CONSTRAINT pk_aggFirstNameByYearState
+	PRIMARY KEY CLUSTERED (ReportYear, StateCode, FirstNameId, Gender);
+GO
+
+EXEC evt.logme N'Create foreign key on agg.FirstNameByYearState referencing ref.FirstName';
+GO
+
+ALTER TABLE agg.FirstNameByYearState
+	ADD CONSTRAINT fk_FirstNameByYearState_FirstName
+	FOREIGN KEY (FirstNameId)
+	REFERENCES ref.FirstName(FirstNameId);
+GO
+
+DROP TABLE src.StateDataRaw;
+GO
+
+/****************************************
+Report back on index sizes & finish up
+****************************************/
+
 
 TRUNCATE TABLE evt.Log;
 GO
@@ -436,9 +606,6 @@ GO
 CHECKPOINT
 GO
 
-/****************************************
-Report back on index sizes & finish up
-****************************************/
 SELECT 
 	sc.name + '.' + so.name as table_name,
 	ps.index_id as index_id,
