@@ -1,4 +1,5 @@
-<img src="https://cloud.githubusercontent.com/assets/1623675/23083302/e627a184-f511-11e6-9d9f-8d1ec5789156.png" width="200" align="right"># BabbyNames
+<img src="https://cloud.githubusercontent.com/assets/1623675/23083302/e627a184-f511-11e6-9d9f-8d1ec5789156.png" width="200" align="right">
+# BabbyNames
 You've heard of [Little Bobby Tables](https://xkcd.com/327/). Now there are Little [Babby](http://www.bbc.co.uk/ulsterscots/words/babbie-babby) Tables.
 
 # What do I download?
