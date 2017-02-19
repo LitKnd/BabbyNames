@@ -1,11 +1,12 @@
-# BabbyNames
+<img src="https://cloud.githubusercontent.com/assets/1623675/23083302/e627a184-f511-11e6-9d9f-8d1ec5789156.png" width="200" align="right"># BabbyNames
 You've heard of [Little Bobby Tables](https://xkcd.com/327/). Now there are Little [Babby](http://www.bbc.co.uk/ulsterscots/words/babbie-babby) Tables.
 
-Download the database here: https://github.com/LitKnd/BabbyNames/releases/tag/v1.0
-
+# What do I download?
+Download stuff here: https://github.com/LitKnd/BabbyNames/releases/tag/v1.0
 
 # Data Source
-names.zip is originally from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data
+names.zip is from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data
+namesbystate.zip is from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-data-by-state-and-district-of-
 
 # The license below applies, unless otherwise noted in the header of a file
 Copyright 2017 Kendra Little
