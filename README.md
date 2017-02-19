@@ -5,8 +5,8 @@ You've heard of [Little Bobby Tables](https://xkcd.com/327/). Now there are Litt
 Download stuff here: https://github.com/LitKnd/BabbyNames/releases/tag/v1.0
 
 # Data Source
-names.zip is from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data
-namesbystate.zip is from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-data-by-state-and-district-of-
+* names.zip is from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data
+* namesbystate.zip is from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-data-by-state-and-district-of-
 
 # The license below applies, unless otherwise noted in the header of a file
 Copyright 2017 Kendra Little
