@@ -1,5 +1,5 @@
 /****************************************
-Copyright 2017 Kendra Little
+Copyright 2018 Kendra Little
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -12,17 +12,17 @@ https://opensource.org/licenses/MIT
 
 /*************************************
 Notes: 
-    This script has only been tested against SQL Server 2016 Developer Edition.
-    SQL Server 2016 Dev Edition is free with Visual Studio Dev Essentials (which is free)
-    https://blogs.technet.microsoft.com/dataplatforminsider/2016/03/31/microsoft-sql-server-developer-edition-is-now-free/
+    This script has been tested against SQL Server 2008R2 and SQL Server 2017 Developer Edition.
+    SQL Server 2017 Dev Edition is free:
+		https://www.microsoft.com/en-us/sql-server/sql-server-downloads-free-trial
 
 Instructions:
 
-    Download names.zip
-        names.zip is originally from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data
+    Download names.zip from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data
         The original file is licensed under cc-zero (public domain dedication)
+	Download namesbystate.zip from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-data-by-state-and-district-of-
 
-    Extract all files from names.zip into C:\BabbyNamesImport
+    Extract all files into C:\BabbyNamesImport
 
     Modify the DataFilePath and LogFilePath in the script below to a location where you want your data and log files
 
@@ -39,10 +39,13 @@ Instructions:
 :SETVAR DataSourcePath "C:\BabbyNamesImport\"
 
 /* Database data file path - requires 5GB */
-:SETVAR DataFilePath "S:\MSSQL\Data\"
+:SETVAR DataFilePath "C:\MSSQL\Data\"
 
 /* Database log file path - requires 1GB, can be the same as data file path */
-:SETVAR LogFilePath "S:\MSSQL\Data\"
+:SETVAR LogFilePath "C:\MSSQL\Data\"
+
+/* Most recent year you have data */
+:SETVAR MaxYear 2016
 
 
 /****************************************
@@ -84,7 +87,7 @@ GO
 SET NOCOUNT ON;
 GO
 
-:SETVAR Versn "1_200"
+:SETVAR Versn "1_300"
 
 /****************************************
 Recreate BabbyNames database.
@@ -201,12 +204,14 @@ GO
 CREATE SCHEMA src AUTHORIZATION dbo;
 GO
 
-declare @min int
-set @min = 1880;
-declare @max int
-set @max = 2015;
-declare @tablename nvarchar(256);
-declare @dsql nvarchar(max);
+
+
+DECLARE @min int;
+SET @min = 1880;
+DECLARE @max int;
+SELECT @max = $(MaxYear);
+DECLARE @tablename nvarchar(256);
+DECLARE @dsql nvarchar(max);
 
 WHILE @min <= @max
 BEGIN
@@ -263,7 +268,7 @@ GO
 DECLARE @min INT;
 SET @min=1881;
 DECLARE @max INT;
-SET @max=2015;
+SELECT @max = $(MaxYear);
 DECLARE @tablename NVARCHAR(256);
 DECLARE @dsql NVARCHAR(MAX);
 
@@ -618,7 +623,19 @@ WHERE so.is_ms_shipped=0
 ORDER BY size_MB desc;
 GO
 
-EXEC evt.logme N'BabbyNames all done with data from 1881 to 2015.';
+DECLARE @min int
+DECLARE @max int
+DECLARE @msg nvarchar(max)
+
+SELECT @min = MIN(ReportYear), @max = MAX(ReportYear) from agg.FirstNameByYear;
+SELECT @msg = N'agg.FirstNameByYear has data from ' + cast(@min as nvarchar(4)) + N' to ' + cast(@max as nvarchar(4));
+
+EXEC evt.logme @msg;
+
+SELECT @min = MIN(ReportYear), @max = MAX(ReportYear) from agg.FirstNameByYearState;
+SELECT @msg = N'agg.FirstNameByYearState has data from ' + cast(@min as nvarchar(4)) + N' to ' + cast(@max as nvarchar(4));
+
+EXEC evt.logme @msg;
 GO
 
 
