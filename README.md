@@ -3,14 +3,14 @@
 You've heard of [Little Bobby Tables](https://xkcd.com/327/). Now there are Little [Babby](http://www.bbc.co.uk/ulsterscots/words/babbie-babby) Tables.
 
 # What do I download?
-Go to this page to get the goods: https://github.com/LitKnd/BabbyNames/releases/tag/v1.1
+Go to this page to get the goods: https://github.com/LitKnd/BabbyNames/releases/tag/v1.2
 
 # Data Source
 * names.zip is from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data
 * namesbystate.zip is from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-data-by-state-and-district-of-
 
 # The license below applies, unless otherwise noted in the header of a file
-Copyright 2017 Kendra Little
+Copyright 2018 Kendra Little
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
