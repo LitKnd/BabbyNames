@@ -45,7 +45,7 @@ Instructions:
 :SETVAR LogFilePath "C:\MSSQL\Data\"
 
 /* Most recent year you have data */
-:SETVAR MaxYear 2016
+:SETVAR MaxYear 2017
 
 
 /****************************************
@@ -407,7 +407,7 @@ GO
 DECLARE @min INT;
 SET @min=1880;
 DECLARE @max INT;
-SET @max=2015;
+SELECT @max = $(MaxYear);
 DECLARE @tablename NVARCHAR(256);
 DECLARE @dsql NVARCHAR(MAX);
 
