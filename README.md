@@ -3,7 +3,7 @@
 You've heard of [Little Bobby Tables](https://xkcd.com/327/). Now there are Little [Babby](http://www.bbc.co.uk/ulsterscots/words/babbie-babby) Tables.
 
 # What do I download?
-Go to this page to get the goods: https://github.com/LitKnd/BabbyNames/releases/tag/v1.2
+Go to this page to get the latest release: https://github.com/LitKnd/BabbyNames/releases
 
 # Data Source
 * names.zip is from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data
